@@ -104,7 +104,7 @@ const Quotes = () => {
         Swal.fire({
           icon: 'success',
           title: 'Operation successful',
-          text: 'The service has been successfully deleted',
+          text: 'Quote has been successfully deleted',
           confirmButtonColor: '#16a34a',
           confirmButtonText: 'Ok'
         });

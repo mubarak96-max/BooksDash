@@ -72,7 +72,7 @@ const categories = [
   },
   {
     id: '1ls',
-    category: 'Interpersonal Communication'
+    category: 'Interpersonal Relationships/Communication'
   },
   {
     id: '5sk',
