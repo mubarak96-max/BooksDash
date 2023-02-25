@@ -63,12 +63,20 @@ const categories = [
     category: 'Productivity'
   },
   {
+    id: 'pos',
+    category: 'Purposeful Living'
+  },
+  {
     id: '1cs',
     category: 'Self control'
   },
   {
     id: '1ls',
     category: 'Interpersonal Communication'
+  },
+  {
+    id: '5sk',
+    category: 'Mindfulness'
   },
   {
     id: '1s',
@@ -144,8 +152,6 @@ export default function AddQuoteModal({
         } else {
           await addDoc(collection(db, 'quotes'), data);
 
-          handleClose();
-
           setSuccess('Successfully added');
         }
 
@@ -160,6 +166,7 @@ export default function AddQuoteModal({
           confirmButtonColor: '#16a34a',
           confirmButtonText: 'Ok'
         });
+        handleClose();
 
         setTimeout(() => {
           setSuccess('');
