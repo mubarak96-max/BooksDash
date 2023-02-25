@@ -5,10 +5,13 @@ import Modal from '@mui/material/Modal';
 import {
   Alert,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   InputLabel,
   MenuItem,
   Select,
   styled,
+  Switch,
   TextField
 } from '@mui/material';
 import {
@@ -72,7 +75,7 @@ const categories = [
   },
   {
     id: '1ls',
-    category: 'Interpersonal Relationships/Communication'
+    category: 'Interpersonal Relationships and Communication'
   },
   {
     id: '5sk',
@@ -84,7 +87,7 @@ const categories = [
   },
   {
     id: '9qs',
-    category: 'Confidence/Mental strength'
+    category: 'Confidence and Mental strength'
   }
 ];
 
@@ -93,11 +96,13 @@ export default function AddQuoteModal({
   handleClose,
   isEdit,
   editId,
-  setLoading
+  setLoading,
+  books
 }) {
   const [book, setBook] = useState('');
   const [category, setCategory] = useState('');
   const [quote, setQuote] = useState('');
+  const [isNewBook, setIsNewBook] = useState(false);
 
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
@@ -112,6 +117,8 @@ export default function AddQuoteModal({
           setBook(data?.book);
           setCategory(data?.category);
           setQuote(data?.quote);
+          setLoading(true);
+          setTimeout(() => setLoading(false), 1000);
         })
         .catch((error) => console.log(error));
     } else {
@@ -183,6 +190,8 @@ export default function AddQuoteModal({
       }
     }
   };
+
+  // console.log('quotes', quotes);
   return (
     <div>
       <Modal
@@ -194,17 +203,64 @@ export default function AddQuoteModal({
         <Box sx={style}>
           <Box>
             <Box sx={{ marginY: 2 }}>
-              {' '}
-              <TextField
-                fullWidth
-                id='outlined-basic'
-                label='Book'
-                variant='outlined'
-                value={book}
-                onChange={(e) => {
-                  setBook(e.target.value);
-                }}
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      defaultChecked
+                      checked={isNewBook}
+                      onChange={(e) => setIsNewBook(e.target.checked)}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label='Existing Book'
+                />
+              </FormGroup>{' '}
+              {isNewBook === true ? (
+                <FormControl fullWidth>
+                  <InputLabel id='demo-simple-select-label'>
+                    Book:{book}
+                  </InputLabel>
+                  <Select
+                    fullWidth
+                    labelId='demo-simple-select-label'
+                    id='demo-simple-select'
+                    sx={{
+                      height: 40,
+
+                      display: 'flex',
+                      alignItems: 'center',
+                      paddingX: 4,
+                      paddingY: 2,
+                      marginY: 2
+                    }}
+                  >
+                    {books?.map((item) => (
+                      <MenuItem
+                        key={item}
+                        value={item}
+                        onClick={() => {
+                          // console.log();
+                          setBook(item);
+                        }}
+                      >
+                        {item}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : (
+                <TextField
+                  fullWidth
+                  id='outlined-basic'
+                  label='Book'
+                  variant='outlined'
+                  value={book}
+                  onChange={(e) => {
+                    setBook(e.target.value);
+                  }}
+                />
+              )}
             </Box>
             <Box sx={{}}>
               <FormControl fullWidth>

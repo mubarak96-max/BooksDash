@@ -40,6 +40,7 @@ const Quotes = () => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [quotes, setQuotes] = useState([]);
+  const [booksArr, setBooksArr] = useState([]);
   const [deleteId, setDeleteId] = useState('');
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -81,6 +82,18 @@ const Quotes = () => {
       //   console.log('quotesArr', quotesArr);
       console.log('quotes', quotes);
       console.log('quotes', quotes);
+
+      let books = [];
+      quotes?.forEach((item) => {
+        console.log('item', item);
+        books.push(item.data.book);
+      });
+
+      const uniqueBooks = [...new Set(books)];
+
+      console.log('unique', uniqueBooks);
+
+      setBooksArr([...uniqueBooks]);
     } catch (error) {
       console.log('error', error.message);
     }
@@ -255,6 +268,7 @@ const Quotes = () => {
           isEdit={isEdit}
           editId={editId}
           setLoading={(props) => setLoading(props)}
+          books={booksArr}
         />
         <ConfirmDeleteModal
           openConfirmDeleteModal={openConfirmDeleteModal}
