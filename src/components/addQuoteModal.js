@@ -56,27 +56,27 @@ const style = {
 const categories = [
   {
     id: '12s',
-    category: 'mental strength'
+    category: 'love and dating'
   },
   {
     id: '1bs',
-    category: 'spirituality'
+    category: 'productivity'
   },
   {
     id: '1cs',
-    category: 'morality'
+    category: 'self control'
   },
   {
     id: '1ls',
-    category: 'love and relationships'
+    category: 'interpersonal communication'
   },
   {
     id: '1s',
-    category: 'finance'
+    category: 'financial education'
   },
   {
     id: '9qs',
-    category: 'self control'
+    category: 'confidence'
   }
 ];
 
@@ -87,9 +87,8 @@ export default function AddQuoteModal({
   editId,
   setLoading
 }) {
-  const [author, setAuthor] = useState('');
+  const [book, setBook] = useState('');
   const [category, setCategory] = useState('');
-  const [commentary, setCommentary] = useState('');
   const [quote, setQuote] = useState('');
 
   const [showError, setShowError] = useState(false);
@@ -102,44 +101,35 @@ export default function AddQuoteModal({
       getDoc(quotesDocRef)
         .then((doc) => {
           const data = doc.data();
-          setAuthor(data?.author);
+          setBook(data?.author);
           setCategory(data?.category);
-          setCommentary(data?.commentary);
           setQuote(data?.quote);
         })
         .catch((error) => console.log(error));
     } else {
-      setAuthor('');
+      setBook('');
       setCategory('');
-      setCommentary('');
+
       setQuote('');
     }
   }, [editId]);
 
   const handleSubmit = async () => {
-    if (author === '') {
-      console.log(showError);
-      setError('author is required');
+    if (book === '') {
+      setError('book is required');
       setShowError(true);
     } else if (category === '') {
-      console.log('fill in the luganda name');
       setError('fill in the category');
       setShowError(true);
-    } else if (commentary === '') {
-      console.log('fill in the name');
-      setError('fill in the commentary');
-      setShowError(true);
     } else if (quote === '') {
-      console.log('provide the audio url');
       setError('provide the quote');
       setShowError(true);
     } else {
       try {
         const data = {
-          author: author,
+          book,
           category: category,
-          quote: quote,
-          commentary: commentary
+          quote: quote
         };
 
         if (isEdit) {
@@ -174,9 +164,9 @@ export default function AddQuoteModal({
         setTimeout(() => {
           setSuccess('');
           setLoading(false);
-          setAuthor('');
+          setBook('');
           setCategory('');
-          setCommentary('');
+
           setQuote('');
         }, 300);
       } catch (error) {
@@ -199,24 +189,26 @@ export default function AddQuoteModal({
             <Box sx={{ marginY: 2 }}>
               {' '}
               <TextField
+                fullWidth
                 id='outlined-basic'
-                label='Author'
+                label='Book'
                 variant='outlined'
-                value={author}
+                value={book}
                 onChange={(e) => {
-                  setAuthor(e.target.value);
+                  setBook(e.target.value);
                 }}
               />
             </Box>
-            <Box sx={{ width: 230 }}>
+            <Box sx={{}}>
               <FormControl fullWidth>
                 <InputLabel id='demo-simple-select-label'>Category</InputLabel>
                 <Select
+                  fullWidth
                   labelId='demo-simple-select-label'
                   id='demo-simple-select'
                   sx={{
-                    height: 30,
-                    width: 150,
+                    height: 40,
+
                     display: 'flex',
                     alignItems: 'center',
                     paddingX: 4,
@@ -241,6 +233,7 @@ export default function AddQuoteModal({
             </Box>
             <Box sx={{ marginY: 2 }}>
               <TextField
+                fullWidth
                 id='outlined-basic'
                 label='Quote'
                 multiline
@@ -249,19 +242,6 @@ export default function AddQuoteModal({
                 value={quote}
                 onChange={(e) => {
                   setQuote(e.target.value);
-                }}
-              />
-            </Box>
-            <Box sx={{ marginY: 2 }}>
-              <TextField
-                id='outlined-basic'
-                label='commentary'
-                multiline
-                rows={7}
-                variant='outlined'
-                value={commentary}
-                onChange={(e) => {
-                  setCommentary(e.target.value);
                 }}
               />
             </Box>
