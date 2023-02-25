@@ -56,27 +56,27 @@ const style = {
 const categories = [
   {
     id: '12s',
-    category: 'love and dating'
+    category: 'Love and Dating'
   },
   {
     id: '1bs',
-    category: 'productivity'
+    category: 'Productivity'
   },
   {
     id: '1cs',
-    category: 'self control'
+    category: 'Self control'
   },
   {
     id: '1ls',
-    category: 'interpersonal communication'
+    category: 'Interpersonal Communication'
   },
   {
     id: '1s',
-    category: 'financial education'
+    category: 'Financial Education'
   },
   {
     id: '9qs',
-    category: 'confidence'
+    category: 'Confidence/Mental strength'
   }
 ];
 
@@ -101,7 +101,7 @@ export default function AddQuoteModal({
       getDoc(quotesDocRef)
         .then((doc) => {
           const data = doc.data();
-          setBook(data?.author);
+          setBook(data?.book);
           setCategory(data?.category);
           setQuote(data?.quote);
         })
@@ -201,7 +201,9 @@ export default function AddQuoteModal({
             </Box>
             <Box sx={{}}>
               <FormControl fullWidth>
-                <InputLabel id='demo-simple-select-label'>Category</InputLabel>
+                <InputLabel id='demo-simple-select-label'>
+                  Category:{category}
+                </InputLabel>
                 <Select
                   fullWidth
                   labelId='demo-simple-select-label'

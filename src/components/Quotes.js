@@ -208,9 +208,7 @@ const Quotes = () => {
                 </Typography>
 
                 <Typography variant='p'>
-                  <span style={{ color: 'darkblue' }}>
-                    {quote?.data?.author}
-                  </span>
+                  <span style={{ color: 'darkblue' }}>{quote?.data?.book}</span>
                 </Typography>
                 <Typography
                   gutterBottom
@@ -219,14 +217,6 @@ const Quotes = () => {
                   sx={{ marginTop: 1 }}
                 >
                   #{quote?.data?.category}
-                </Typography>
-                <Typography
-                  gutterBottom
-                  variant='p'
-                  component='div'
-                  sx={{ marginTop: 1 }}
-                >
-                  {quote?.data?.commentary}
                 </Typography>
               </CardContent>
               <CardActionArea>
