@@ -70,16 +70,28 @@ const categories = [
     category: 'Purposeful Living'
   },
   {
+    id: 'motv',
+    category: 'Motivation'
+  },
+  {
     id: '1cs',
     category: 'Self control'
   },
   {
+    id: 'coom',
+    category: 'Communication Skills'
+  },
+  {
     id: '1ls',
-    category: 'Interpersonal Relationships and Communication'
+    category: 'Interpersonal Relationships'
   },
   {
     id: '5sk',
     category: 'Mindfulness'
+  },
+  {
+    id: 'con489',
+    category: 'Confidence'
   },
   {
     id: '1s',
@@ -87,7 +99,7 @@ const categories = [
   },
   {
     id: '9qs',
-    category: 'Confidence and Mental strength'
+    category: 'Mental strength'
   }
 ];
 

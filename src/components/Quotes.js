@@ -80,8 +80,7 @@ const Quotes = () => {
       });
       setQuotes([...quotesArr]);
       //   console.log('quotesArr', quotesArr);
-      console.log('quotes', quotes);
-      console.log('quotes', quotes);
+      // console.log('quotes', quotes);
 
       let books = [];
       quotes?.forEach((item) => {
