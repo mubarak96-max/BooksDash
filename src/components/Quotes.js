@@ -5,6 +5,10 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   styled,
   Typography
 } from '@mui/material';
@@ -16,6 +20,53 @@ import { db } from '../firebase';
 import AddQuoteModal from './addQuoteModal';
 import ConfirmDeleteModal from './confirmDelete';
 // import { FaArrowCircleUp } from 'react-icons/fa';
+
+const categories = [
+  {
+    id: '12s',
+    category: 'Love and Dating'
+  },
+  {
+    id: '1bs',
+    category: 'Productivity'
+  },
+  {
+    id: 'pos',
+    category: 'Purposeful Living'
+  },
+  {
+    id: 'motv',
+    category: 'Motivation'
+  },
+  {
+    id: '1cs',
+    category: 'Self control'
+  },
+  {
+    id: 'coom',
+    category: 'Communication Skills'
+  },
+  {
+    id: '1ls',
+    category: 'Interpersonal Relationships'
+  },
+  {
+    id: '5sk',
+    category: 'Mindfulness'
+  },
+  {
+    id: 'con489',
+    category: 'Confidence'
+  },
+  {
+    id: '1s',
+    category: 'Financial Education'
+  },
+  {
+    id: '9qs',
+    category: 'Mental strength'
+  }
+];
 
 const AddButton = styled(Button)(({ theme }) => ({
   color: 'white',
@@ -48,6 +99,8 @@ const Quotes = () => {
 
   const [visible, setVisible] = useState(false);
 
+  const [currentCategory, setCurrentCategory] = useState('Love and Dating');
+
   const toggleVisible = () => {
     const scrolled = document.documentElement.scrollTop;
     if (scrolled > 300) {
@@ -78,21 +131,30 @@ const Quotes = () => {
         // console.log(doc.id, " => ", doc.data());
         quotesArr.push({ id: doc.id, data: doc.data() });
       });
-      setQuotes([...quotesArr]);
-      //   console.log('quotesArr', quotesArr);
+
+      const filtered = quotesArr?.filter(
+        (item) => item?.data?.category === currentCategory
+      );
+
+      // console.log('filtered', filtered);
+
+      setQuotes(filtered);
+      // console.log('quotesArr', quotesArr);
       // console.log('quotes', quotes);
 
       let books = [];
       quotes?.forEach((item) => {
-        console.log('item', item);
+        // console.log('item', item);
         books.push(item.data.book);
       });
 
       const uniqueBooks = [...new Set(books)];
 
-      console.log('unique', uniqueBooks);
+      // console.log('unique', uniqueBooks);
 
       setBooksArr([...uniqueBooks]);
+
+      // const filtered = uniqueBooks?.filter((item)=>item.)
     } catch (error) {
       console.log('error', error.message);
     }
@@ -100,7 +162,7 @@ const Quotes = () => {
 
   useEffect(() => {
     getData();
-  }, [loading]);
+  }, [loading, currentCategory]);
 
   let navigate = useNavigate();
 
@@ -158,12 +220,42 @@ const Quotes = () => {
         }}
       >
         <Box>
-          {/* <Button>
-            <FaArrowCircleUp
-              onClick={scrollToTop}
-              style={{ display: visible ? 'inline' : 'none' }}
-            />
-          </Button> */}
+          <h3 className='text-center text-lg text-blue-600 font-medium'>
+            {quotes?.length} Quotes
+          </h3>
+
+          <div>
+            <FormControl fullWidth>
+              <InputLabel id='demo-simple-select-label'>Category</InputLabel>
+              <Select
+                fullWidth
+                labelId='demo-simple-select-label'
+                id='demo-simple-select'
+                sx={{
+                  height: 40,
+
+                  display: 'flex',
+                  alignItems: 'center',
+                  paddingX: 4,
+                  paddingY: 2,
+                  marginY: 2
+                }}
+              >
+                {categories?.map((item) => (
+                  <MenuItem
+                    key={item.category}
+                    value={item.category}
+                    onClick={() => {
+                      // console.log();
+                      setCurrentCategory(item.category);
+                    }}
+                  >
+                    {item.category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
           <button
             onClick={() => {
               window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
