@@ -1,34 +1,38 @@
-import { Box, Button, styled } from '@mui/material';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, styled } from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import BasicTabs from "./Tabs";
 
 const QuotesButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'blue',
+  color: "white",
+  background: "blue",
   marginBottom: 3,
   marginTop: 2,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const Home = () => {
   let navigate = useNavigate();
   return (
-    <Box
-      sx={{
-        display: 'flex',
+    <>
+      <BasicTabs />
+    </>
+    // <Box
+    //   sx={{
+    //     display: 'flex',
 
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginY: 25
-      }}
-    >
-      <Box>
-        <QuotesButton onClick={() => navigate('/quotes')}>
-          Book Quotes
-        </QuotesButton>
-      </Box>
-    </Box>
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     marginY: 25
+    //   }}
+    // >
+    //   <Box>
+    //     <QuotesButton onClick={() => navigate('/quotes')}>
+    //       Book Quotes
+    //     </QuotesButton>
+    //   </Box>
+    // </Box>
   );
 };
 

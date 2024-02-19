@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonGroup,
   Card,
   CardActionArea,
   CardActions,
@@ -11,80 +12,84 @@ import {
   Select,
   styled,
   Typography
-} from '@mui/material';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { db } from '../firebase';
-import AddQuoteModal from './addQuoteModal';
-import ConfirmDeleteModal from './confirmDelete';
+} from "@mui/material";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { db } from "../firebase";
+import AddQuoteModal from "./addQuoteModal";
+import ConfirmDeleteModal from "./confirmDelete";
 // import { FaArrowCircleUp } from 'react-icons/fa';
 
 const categories = [
   {
-    id: '12s',
-    category: 'Love and Dating'
+    id: "all",
+    category: "All"
   },
   {
-    id: '1bs',
-    category: 'Productivity'
+    id: "12s",
+    category: "Love and Dating"
   },
   {
-    id: 'pos',
-    category: 'Purposeful Living'
+    id: "1bs",
+    category: "Productivity"
   },
   {
-    id: 'motv',
-    category: 'Motivation'
+    id: "pos",
+    category: "Purposeful Living"
   },
   {
-    id: '1cs',
-    category: 'Self control'
+    id: "motv",
+    category: "Motivation"
   },
   {
-    id: 'coom',
-    category: 'Communication Skills'
+    id: "1cs",
+    category: "Self control"
   },
   {
-    id: '1ls',
-    category: 'Interpersonal Relationships'
+    id: "coom",
+    category: "Communication Skills"
   },
   {
-    id: '5sk',
-    category: 'Mindfulness'
+    id: "1ls",
+    category: "Interpersonal Relationships"
   },
   {
-    id: 'con489',
-    category: 'Confidence'
+    id: "5sk",
+    category: "Mindfulness"
   },
   {
-    id: '1s',
-    category: 'Financial Education'
+    id: "con489",
+    category: "Confidence"
   },
   {
-    id: '9qs',
-    category: 'Mental strength'
+    id: "1s",
+    category: "Financial Education"
+  },
+  {
+    id: "9qs",
+    category: "Mental strength"
   }
 ];
 
 const AddButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'blue',
+  color: "white",
+  background: "blue",
   marginBottom: 3,
   marginTop: 2,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const HomeButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'darkred',
+  color: "white",
+  background: "darkred",
   marginBottom: 3,
   marginTop: 2,
   marginLeft: 8,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const Quotes = () => {
@@ -92,14 +97,15 @@ const Quotes = () => {
   const [loading, setLoading] = useState(false);
   const [quotes, setQuotes] = useState([]);
   const [booksArr, setBooksArr] = useState([]);
-  const [deleteId, setDeleteId] = useState('');
+  const [deleteId, setDeleteId] = useState("");
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [editId, setEditId] = useState('');
+  const [editId, setEditId] = useState("");
 
   const [visible, setVisible] = useState(false);
 
-  const [currentCategory, setCurrentCategory] = useState('Love and Dating');
+  const [currentCategory, setCurrentCategory] = useState("Love and Dating");
+  const [allQuotes, setAllQuotes] = useState([]);
 
   const toggleVisible = () => {
     const scrolled = document.documentElement.scrollTop;
@@ -113,18 +119,18 @@ const Quotes = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth"
       /* you can also use 'auto' behaviour
          in place of 'smooth' */
     });
   };
 
-  window.addEventListener('scroll', toggleVisible);
+  window.addEventListener("scroll", toggleVisible);
 
   const getData = async () => {
     try {
       let quotesArr = [];
-      const quotesRef = collection(db, 'quotes');
+      const quotesRef = collection(db, "quotes");
 
       const querySnapshot = await getDocs(quotesRef);
       querySnapshot.forEach((doc) => {
@@ -132,13 +138,11 @@ const Quotes = () => {
         quotesArr.push({ id: doc.id, data: doc.data() });
       });
 
-      const filtered = quotesArr?.filter(
-        (item) => item?.data?.category === currentCategory
-      );
+      setAllQuotes(quotesArr);
 
-      // console.log('filtered', filtered);
+      // console.log('all quotes', quotesArr);
 
-      setQuotes(filtered);
+      setQuotes(quotesArr);
       // console.log('quotesArr', quotesArr);
       // console.log('quotes', quotes);
 
@@ -156,7 +160,7 @@ const Quotes = () => {
 
       // const filtered = uniqueBooks?.filter((item)=>item.)
     } catch (error) {
-      console.log('error', error.message);
+      console.log("error", error.message);
     }
   };
 
@@ -166,21 +170,44 @@ const Quotes = () => {
 
   let navigate = useNavigate();
 
+  const changeCategory = () => {
+    if (currentCategory === "All") {
+      setQuotes(allQuotes); // Reset to all quotes if "All" is selected
+    } else {
+      const filtered = allQuotes.filter(
+        (item) => item?.data?.category === currentCategory
+      );
+      setQuotes(filtered);
+    }
+  };
+
+  // const changeCategory1 = () => {
+  //   const filtered = quotes?.filter(
+  //     (item) => item?.data?.category === currentCategory
+  //   );
+
+  //   console.log("filtered", currentCategory, filtered);
+
+  //   setQuotes(filtered);
+
+  //   console.log("qqquuootes", quotes);
+  // };
+
   const deleteQuote = (deleteId) => {
-    deleteDoc(doc(db, 'quotes', deleteId))
+    deleteDoc(doc(db, "quotes", deleteId))
       .then(() => {
         setLoading(true);
         setOpenConfirmDeleteModal(false);
         setTimeout(() => {
           setLoading(false);
-          setDeleteId('');
+          setDeleteId("");
         }, 1000);
         Swal.fire({
-          icon: 'success',
-          title: 'Operation successful',
-          text: 'Quote has been successfully deleted',
-          confirmButtonColor: '#16a34a',
-          confirmButtonText: 'Ok'
+          icon: "success",
+          title: "Operation successful",
+          text: "Quote has been successfully deleted",
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "Ok"
         });
       })
       .catch((error) => {
@@ -192,11 +219,11 @@ const Quotes = () => {
     <>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           marginY: 2,
-          justifyContent: 'center',
-          alignItems: 'center'
+          justifyContent: "center",
+          alignItems: "center"
         }}
       >
         <AddButton
@@ -207,35 +234,40 @@ const Quotes = () => {
         >
           Add Quotes
         </AddButton>
-        <HomeButton onClick={() => navigate('/')}>Back Home</HomeButton>
       </Box>
 
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'row'
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "row"
         }}
       >
         <Box>
-          <h3 className='text-center text-lg text-blue-600 font-medium'>
-            {quotes?.length} Quotes
+          <h3 className="text-lg font-medium text-center text-blue-600">
+            {allQuotes?.length} {currentCategory} Quotes
           </h3>
 
           <div>
             <FormControl fullWidth>
-              <InputLabel id='demo-simple-select-label'>Category</InputLabel>
+              <InputLabel id="demo-simple-select-label">Category</InputLabel>
               <Select
                 fullWidth
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={currentCategory} // Control the selected value
+                label="Category"
+                onChange={(event) => {
+                  setCurrentCategory(event.target.value);
+                  setTimeout(() => changeCategory(), 100); // Adjust timing if necessary
+                }}
                 sx={{
                   height: 40,
 
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   paddingX: 4,
                   paddingY: 2,
                   marginY: 2
@@ -248,6 +280,8 @@ const Quotes = () => {
                     onClick={() => {
                       // console.log();
                       setCurrentCategory(item.category);
+
+                      // setTimeout(() => changeCategory(), 1000);
                     }}
                   >
                     {item.category}
@@ -258,17 +292,17 @@ const Quotes = () => {
           </div>
           <button
             onClick={() => {
-              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
             }}
             style={{
-              position: 'fixed',
-              padding: '1rem 2rem',
-              fontSize: '20px',
-              bottom: '40px',
-              right: '40px',
-              backgroundColor: '#0C9',
-              color: '#fff',
-              textAlign: 'center'
+              position: "fixed",
+              padding: "1rem 2rem",
+              fontSize: "20px",
+              bottom: "40px",
+              right: "40px",
+              backgroundColor: "#0C9",
+              color: "#fff",
+              textAlign: "center"
             }}
           >
             Scroll to top
@@ -281,18 +315,18 @@ const Quotes = () => {
                 marginRight: 5,
                 marginBottom: 5,
                 marginX: 2,
-                border: '2px solid lightblue',
-                overflowY: 'scroll'
+                border: "2px solid lightblue",
+                overflowY: "scroll"
               }}
             >
               <CardContent
                 sx={{
-                  overflow: 'hidden',
-                  overflowY: 'scroll',
-                  overflowX: 'hidden'
+                  overflow: "hidden",
+                  overflowY: "scroll",
+                  overflowX: "hidden"
                 }}
               >
-                <Typography gutterBottom variant='h6' component='div'>
+                <Typography gutterBottom variant="h6" component="div">
                   {/* <span
                   style={{
                     fontWeight: 'bold',
@@ -301,7 +335,7 @@ const Quotes = () => {
                 ></span> */}
                   Number: {index + 1}
                 </Typography>
-                <Typography gutterBottom variant='h6' component='div'>
+                <Typography gutterBottom variant="h6" component="div">
                   {/* <span
                   style={{
                     fontWeight: 'bold',
@@ -311,13 +345,13 @@ const Quotes = () => {
                   {quote?.data?.quote}
                 </Typography>
 
-                <Typography variant='p'>
-                  <span style={{ color: 'darkblue' }}>{quote?.data?.book}</span>
+                <Typography variant="p">
+                  <span style={{ color: "darkblue" }}>{quote?.data?.book}</span>
                 </Typography>
                 <Typography
                   gutterBottom
-                  variant='p'
-                  component='div'
+                  variant="p"
+                  component="div"
                   sx={{ marginTop: 1 }}
                 >
                   #{quote?.data?.category}
@@ -326,25 +360,25 @@ const Quotes = () => {
               <CardActionArea>
                 <CardActions>
                   <Button
-                    size='small'
+                    size="small"
                     onClick={() => {
                       setIsEdit(true);
                       setEditId(quote?.id);
                       setOpenModal(true);
                     }}
                   >
-                    <div className='flex  space-x-1 w-fit items-center px-3 rounded-md py-2 hover:text-white hover:bg-green-700 hover:cursor-pointer  text-green-500 border border-green-500'>
+                    <div className="flex items-center px-3 py-2 space-x-1 text-green-500 border border-green-500 rounded-md w-fit hover:text-white hover:bg-green-700 hover:cursor-pointer">
                       Edit
                     </div>
                   </Button>
                   <Button
-                    size='small'
+                    size="small"
                     onClick={() => {
                       setOpenConfirmDeleteModal(true);
                       setDeleteId(quote?.id);
                     }}
                   >
-                    <div className='flex  space-x-1 w-fit items-center px-3 rounded-md py-2 hover:text-white hover:bg-red-700 hover:cursor-pointer  text-red-500 border border-red-500'>
+                    <div className="flex items-center px-3 py-2 space-x-1 text-red-500 border border-red-500 rounded-md w-fit hover:text-white hover:bg-red-700 hover:cursor-pointer">
                       Delete
                     </div>
                   </Button>
