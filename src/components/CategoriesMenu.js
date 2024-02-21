@@ -3,15 +3,25 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { categories } from "../utils/categories";
+import { useDispatch } from "react-redux";
+import { setCategory } from "../utils/redux/slices/categories";
 
-export default function CategoriesMenu() {
+export default function CategoriesMenu({ setCurrentCategory, changeCategory }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const dispatch = useDispatch();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (prop) => {
     setAnchorEl(null);
+    setCurrentCategory(prop);
+
+    dispatch(setCategory(prop));
+
+    setTimeout(() => changeCategory(), 500);
   };
 
   return (
@@ -35,7 +45,10 @@ export default function CategoriesMenu() {
         }}
       >
         {categories?.map((category) => (
-          <MenuItem key={category?.id} onClick={handleClose}>
+          <MenuItem
+            key={category?.id}
+            onClick={() => handleClose(category?.category)}
+          >
             {category?.category}
           </MenuItem>
         ))}
