@@ -6,7 +6,7 @@ import { categories } from "../utils/categories";
 import { useDispatch } from "react-redux";
 import { setCategory } from "../utils/redux/slices/categories";
 
-export default function CategoriesMenu({ setCurrentCategory, changeCategory }) {
+export default function CategoriesMenu({ setCurrentCategory }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -15,13 +15,14 @@ export default function CategoriesMenu({ setCurrentCategory, changeCategory }) {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = (prop) => {
     setAnchorEl(null);
     setCurrentCategory(prop);
 
     dispatch(setCategory(prop));
 
-    setTimeout(() => changeCategory(), 500);
+    
   };
 
   return (

@@ -22,8 +22,8 @@ import {
   serverTimestamp,
   updateDoc
 } from "firebase/firestore";
-import { db } from "../firebase";
 import Swal from "sweetalert2";
+import { db } from "../../firebase";
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -103,7 +103,7 @@ const categories = [
   }
 ];
 
-export default function AddQuoteModal({
+export default function AddBookModal({
   openModal,
   handleClose,
   isEdit,
@@ -122,7 +122,7 @@ export default function AddQuoteModal({
 
   useEffect(() => {
     if (isEdit) {
-      const quotesDocRef = doc(db, "quotes", editId);
+      const quotesDocRef = doc(db, "Books", editId);
       getDoc(quotesDocRef)
         .then((doc) => {
           const data = doc.data();
@@ -160,7 +160,7 @@ export default function AddQuoteModal({
         };
 
         if (isEdit) {
-          const quotesRef = doc(db, "quotes", editId);
+          const quotesRef = doc(db, "Books", editId);
 
           updateDoc(quotesRef, data).then(() => {
             setLoading(true);
@@ -169,7 +169,7 @@ export default function AddQuoteModal({
 
           setSuccess("Successfully edited");
         } else {
-          await addDoc(collection(db, "quotes"), data);
+          await addDoc(collection(db, "Books"), data);
 
           setSuccess("Successfully added");
         }
@@ -181,7 +181,7 @@ export default function AddQuoteModal({
         Swal.fire({
           icon: "success",
           title: "Operation successful",
-          text: `Quote has been successfully ${isEdit ? "edited" : "created"}`,
+          text: `Book has been successfully ${isEdit ? "edited" : "created"}`,
           confirmButtonColor: "#16a34a",
           confirmButtonText: "Ok"
         });
@@ -215,66 +215,6 @@ export default function AddQuoteModal({
       >
         <Box sx={style}>
           <Box>
-            <Box sx={{ marginY: 2 }}>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      defaultChecked
-                      checked={isNewBook}
-                      onChange={(e) => setIsNewBook(e.target.checked)}
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                  label="Existing Book"
-                />
-              </FormGroup>{" "}
-              {isNewBook === true ? (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Book:{book}
-                  </InputLabel>
-                  <Select
-                    fullWidth
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    sx={{
-                      height: 40,
-
-                      display: "flex",
-                      alignItems: "center",
-                      paddingX: 4,
-                      paddingY: 2,
-                      marginY: 2
-                    }}
-                  >
-                    {books?.map((item) => (
-                      <MenuItem
-                        key={item}
-                        value={item}
-                        onClick={() => {
-                          // console.log();
-                          setBook(item);
-                        }}
-                      >
-                        {item}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : (
-                <TextField
-                  fullWidth
-                  id="outlined-basic"
-                  label="Book"
-                  variant="outlined"
-                  value={book}
-                  onChange={(e) => {
-                    setBook(e.target.value);
-                  }}
-                />
-              )}
-            </Box>
             <Box sx={{}}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">
@@ -315,7 +255,6 @@ export default function AddQuoteModal({
                 id="outlined-basic"
                 label="Quote"
                 multiline
-                rows={7}
                 variant="outlined"
                 value={quote}
                 onChange={(e) => {

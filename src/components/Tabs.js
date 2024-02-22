@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Quotes from "./Quotes";
 import Quotes2 from "./Quotes2";
+import Books from "./books/Books";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,18 +57,14 @@ export default function BasicTabs() {
           aria-label="basic tabs example"
         >
           <Tab label="Quotes" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+          <Tab label="Books" {...a11yProps(1)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <Quotes2 />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
+        <Books />
       </CustomTabPanel>
     </Box>
   );
