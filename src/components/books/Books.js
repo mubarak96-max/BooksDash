@@ -1,18 +1,69 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SingleBook from "./SingleBook";
 import AddBookModal from "./AddBookModal";
+import BookCategories from "./BookCategories";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Books = () => {
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [quotes, setQuotes] = useState([]);
   const [allQuotes, setAllQuotes] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("");
   const [booksArr, setBooksArr] = useState([]);
   const [deleteId, setDeleteId] = useState("");
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState("");
+
+  const getData = async () => {
+    try {
+      let booksArr = [];
+      const booksRef = collection(db, "Books");
+
+      const querySnapshot = await getDocs(booksRef);
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data());
+        booksArr.push({ id: doc.id, data: doc.data() });
+      });
+
+      setAllBooks(booksArr);
+
+      // console.log('all quotes', quotesArr);
+
+      setBooks(booksArr);
+      // console.log('quotesArr', quotesArr);
+      // console.log('quotes', quotes);
+
+      // const filtered = uniqueBooks?.filter((item)=>item.)
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [loading]);
+
+  useEffect(() => {
+    changeCategory();
+  }, [currentCategory]);
+
+  const changeCategory = () => {
+    console.log("changed");
+
+    if (currentCategory === "All") {
+      setBooks(allBooks); // Reset to all quotes if "All" is selected
+    } else {
+      const filtered = allBooks.filter(
+        (item) => item?.data?.category === currentCategory
+      );
+      setBooks(filtered);
+    }
+  };
 
   return (
     <div>
@@ -26,13 +77,21 @@ const Books = () => {
         Add New Book
       </button>
 
-      <SingleBook
-        title="Title Book"
-        author="Test Author"
-        category="Confidence"
-        imageSrc="https://cdn.pixabay.com/photo/2024/02/08/20/31/smoking-8561797_1280.jpg"
-        description="This component will include an image at the top, followed by a title, author, description, and three buttons at the bottom, as requested."
+      <BookCategories
+        setCurrentCategory={setCurrentCategory}
+        changeCategory={changeCategory}
       />
+
+      {books?.map((book) => (
+        <SingleBook
+          key={book?.id}
+          title={book?.data?.title}
+          author={book?.data?.author}
+          category={book?.data?.category}
+          imageSrc={book?.data?.imageUrl}
+          description={book?.data?.theme}
+        />
+      ))}
 
       <AddBookModal
         openModal={openModal}

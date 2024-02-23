@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import {
   Alert,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -22,8 +23,10 @@ import {
   serverTimestamp,
   updateDoc
 } from "firebase/firestore";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import Swal from "sweetalert2";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
+import { booksCategories } from "./BookCategories";
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   color: "white",
@@ -114,11 +117,16 @@ export default function AddBookModal({
   const [book, setBook] = useState("");
   const [category, setCategory] = useState("");
   const [quote, setQuote] = useState("");
-  const [isNewBook, setIsNewBook] = useState(false);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [theme, setTheme] = useState("");
 
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageProgress, setImageProgress] = useState(null);
+  const [bookName, setBookName] = useState("");
 
   useEffect(() => {
     if (isEdit) {
@@ -126,37 +134,70 @@ export default function AddBookModal({
       getDoc(quotesDocRef)
         .then((doc) => {
           const data = doc.data();
-          setBook(data?.book);
           setCategory(data?.category);
-          setQuote(data?.quote);
+          setImageUrl(data?.imageUrl);
+          setTitle(data?.title);
+          setAuthor(data?.author);
+          setTheme(data?.theme);
           setLoading(true);
           setTimeout(() => setLoading(false), 1000);
         })
         .catch((error) => console.log(error));
     } else {
-      setBook("");
+      setImageUrl("");
+      setTitle("");
+      setAuthor("");
+      setTheme("");
       setCategory("");
-
-      setQuote("");
     }
   }, [editId]);
 
+  const handleUpload = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    if (!file) return;
+    const storageRef = ref(storage, `files/books/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    setBookName(file.name);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+
+        if (e.target.name === "book image") return setImageProgress(progress);
+      },
+      (error) => {
+        alert(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          if (e.target.name === "book image") return setImageUrl(downloadURL);
+        });
+      }
+    );
+  };
+
   const handleSubmit = async () => {
-    if (book === "") {
-      setError("book is required");
+    if (title === "") {
+      setError("book title is required");
       setShowError(true);
     } else if (category === "") {
       setError("fill in the category");
       setShowError(true);
-    } else if (quote === "") {
-      setError("provide the quote");
+    } else if (author === "") {
+      setError("provide the author");
       setShowError(true);
     } else {
       try {
         const data = {
-          book,
+          title,
+          author,
+          theme,
+          lessons: [],
           category: category,
-          quote: quote
+          imageUrl
         };
 
         if (isEdit) {
@@ -187,10 +228,13 @@ export default function AddBookModal({
         });
         handleClose();
 
-        setBook("");
+        setImageUrl("");
+        setTitle("");
+        setAuthor("");
+        setTheme("");
         setCategory("");
 
-        setQuote("");
+        setImageProgress(null);
 
         setTimeout(() => {
           setSuccess("");
@@ -204,7 +248,6 @@ export default function AddBookModal({
     }
   };
 
-  // console.log('quotes', quotes);
   return (
     <div>
       <Modal
@@ -234,7 +277,7 @@ export default function AddBookModal({
                     marginY: 2
                   }}
                 >
-                  {categories?.map((item) => (
+                  {booksCategories?.map((item) => (
                     <MenuItem
                       key={item.id}
                       value={item.category}
@@ -249,17 +292,84 @@ export default function AddBookModal({
                 </Select>
               </FormControl>
             </Box>
+
+            <Box sx={{ marginY: 2 }}>
+              <InputLabel sx={{ marginBottom: 1, fontWeight: "600" }}>
+                Book File
+              </InputLabel>
+              <div>
+                <div className="flex">
+                  {/* <label htmlFor='name'>Add Banner Image</label> */}
+
+                  <input
+                    onChange={(e) => handleUpload(e)}
+                    className="px-4 py-2 focus:border focus:border-blue-500"
+                    type="file"
+                    id=""
+                    name="book image"
+                    // accept=".pdf"
+                  />
+
+                  <img
+                    src={imageUrl}
+                    alt="uploaded file"
+                    className="h-[70px] w-[50px] border border-gray-500 p-2 border-dotted"
+                  />
+                </div>
+
+                {imageProgress < 100 && (
+                  <div className="outerbar">
+                    <CircularProgress
+                      variant="determinate"
+                      value={imageProgress}
+                    />
+                  </div>
+                )}
+              </div>
+            </Box>
+
             <Box sx={{ marginY: 2 }}>
               <TextField
                 fullWidth
                 id="outlined-basic"
-                label="Quote"
+                label="Title"
+                size="small"
                 multiline
                 variant="outlined"
-                value={quote}
+                value={title}
                 onChange={(e) => {
-                  setQuote(e.target.value);
+                  setTitle(e.target.value);
                 }}
+                sx={{ marginBottom: 1 }}
+              />
+
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                label="Author"
+                size="small"
+                multiline
+                variant="outlined"
+                value={author}
+                onChange={(e) => {
+                  setAuthor(e.target.value);
+                }}
+                sx={{ marginBottom: 1 }}
+              />
+
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                label="Theme"
+                size="small"
+                multiline
+                variant="outlined"
+                value={theme}
+                maxRows={7}
+                onChange={(e) => {
+                  setTheme(e.target.value);
+                }}
+                sx={{ marginBottom: 1 }}
               />
             </Box>
           </Box>
