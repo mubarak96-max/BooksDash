@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import SingleBook from "./SingleBook";
 import AddBookModal from "./AddBookModal";
 import BookCategories from "./BookCategories";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
+import ConfirmDeleteModal from "../confirmDelete";
+import Swal from "sweetalert2";
 
 const Books = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -65,6 +67,29 @@ const Books = () => {
     }
   };
 
+  const deleteBook = (deleteId) => {
+    deleteDoc(doc(db, "Books", deleteId))
+      .then(() => {
+        setLoading(true);
+        setOpenConfirmDeleteModal(false);
+        setTimeout(() => {
+          setLoading(false);
+          setDeleteId("");
+          setCurrentCategory("");
+        }, 1000);
+        Swal.fire({
+          icon: "success",
+          title: "Operation successful",
+          text: "Book has been successfully deleted",
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "Ok"
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <button
@@ -82,14 +107,21 @@ const Books = () => {
         changeCategory={changeCategory}
       />
 
-      {books?.map((book) => (
+      {books?.map((book, index) => (
         <SingleBook
           key={book?.id}
+          id={book?.id}
           title={book?.data?.title}
           author={book?.data?.author}
           category={book?.data?.category}
           imageSrc={book?.data?.imageUrl}
           description={book?.data?.theme}
+          setOpenConfirmDeleteModal={setOpenConfirmDeleteModal}
+          setDeleteId={setDeleteId}
+          setOpenModal={setOpenModal}
+          setIsEdit={setIsEdit}
+          setEditId={setEditId}
+          index={index}
         />
       ))}
 
@@ -100,6 +132,12 @@ const Books = () => {
         editId={editId}
         setLoading={(props) => setLoading(props)}
         books={booksArr}
+      />
+
+      <ConfirmDeleteModal
+        openConfirmDeleteModal={openConfirmDeleteModal}
+        closeConfirmDeleteModal={() => setOpenConfirmDeleteModal(false)}
+        confirmDelete={() => deleteBook(deleteId)}
       />
     </div>
   );

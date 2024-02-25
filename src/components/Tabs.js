@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Quotes from "./Quotes";
 import Quotes2 from "./Quotes2";
 import Books from "./books/Books";
+import Ad from "./ad/Ad";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -58,6 +59,7 @@ export default function BasicTabs() {
         >
           <Tab label="Quotes" {...a11yProps(0)} />
           <Tab label="Books" {...a11yProps(1)} />
+          <Tab label="Ads" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -65,6 +67,9 @@ export default function BasicTabs() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <Books />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        <Ad />
       </CustomTabPanel>
     </Box>
   );
