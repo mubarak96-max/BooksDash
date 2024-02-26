@@ -9,7 +9,7 @@ const Ad = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [times, setTimes] = useState(null);
+  const [times, setTimes] = useState([]);
 
   const getData = async () => {
     try {
@@ -30,11 +30,11 @@ const Ad = () => {
     }
   };
 
+  console.log("times", times);
+
   useEffect(() => {
     getData();
   }, [loading]);
-
-  console.log(times[0]?.data?.adsNumber, "times");
 
   return (
     <div className="max-w-sm my-5 rounded overflow-hidden shadow-lg bg-white">
