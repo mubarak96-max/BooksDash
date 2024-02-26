@@ -19,7 +19,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 900,
+  width: 400,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -160,9 +160,9 @@ export default function LessonsModal({
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      marginX: 6,
+                      marginX: 4,
                       marginY: 2,
-                      width: "100%"
+                      width: "90%"
                     }}
                   >
                     <Typography
@@ -197,9 +197,18 @@ export default function LessonsModal({
                       >
                         {item?.description}
                       </h6>
+
+                      <button
+                        onClick={() => {
+                          console.log("item", item);
+                          deleteOption(item);
+                        }}
+                      >
+                        <HighlightOff />
+                      </button>
                     </Typography>
 
-                    <Button
+                    {/* <Button
                       onClick={() => {
                         console.log("item", item);
                         deleteOption(item);
@@ -211,7 +220,7 @@ export default function LessonsModal({
 
                         <span>Remove Option</span>
                       </div>
-                    </Button>
+                    </Button> */}
                   </Box>
                 ))}
               </Box>
